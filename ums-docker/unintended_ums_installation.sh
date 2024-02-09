@@ -1,0 +1,40 @@
+#!/usr/bin/env expect
+set PATH_TO_UMS [lindex $argv 0]
+
+spawn "${PATH_TO_UMS}" --nox11
+set timeout -1
+expect "Welcome"
+send -- "\r"
+expect "EULA"
+send -- "\r"
+expect "Destination"
+send -- "\r"
+expect "Installation type"
+send -- "\r"
+expect "UMS Web App"
+send -- "\r"
+expect "system requirements"
+send -- "\r"
+expect "IP address"
+send -- "\r"
+expect "Data directory"
+send -- "\r"
+expect "Database selection"
+send -- "\r"
+expect "User name"
+send -- "ums"
+send -- "\r"
+expect "Password"
+send -- "ums"
+#Down KEY
+send -- "OB"
+send -- "ums"
+send -- "\t"
+send -- "\r"
+expect "Shortcuts"
+send -- "\r"
+expect "Installation summary"
+send -- "\r"
+expect "Success"
+send -- "\r"
+expect eof

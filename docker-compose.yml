@@ -1,0 +1,28 @@
+version: '3.6'
+services:
+  ums-client:
+    build:
+      context: ums-docker
+      target: ums-client
+    restart: always
+    ports:
+      - '8080:8080'
+      - '8081:8081'
+    volumes:
+      - './greenfield:/opt/greenfield'
+    networks:
+      - ums
+
+  ums-server:
+    build:
+      context: ums-docker
+      target: ums-server
+    restart: always
+    ports:
+      - '8443:8443'
+    networks:
+      - ums
+
+networks:
+  ums:
+    name: ums-network
