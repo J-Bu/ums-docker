@@ -10,6 +10,8 @@ services:
       - '8081:8081'
     volumes:
       - './greenfield:/opt/greenfield'
+    devices:
+      - '/dev/dri:/dev/dri'
     networks:
       - ums
 

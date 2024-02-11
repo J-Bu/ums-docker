@@ -45,6 +45,9 @@ RUN apt-get install -y --no-install-recommends \
     gstreamer1.0-plugins-bad \
     gstreamer1.0-plugins-ugly \
     gstreamer1.0-gl \
+    gstreamer1.0-vaapi \
+    libgl1-mesa-dri \
+    mesa-va-drivers \
     libosmesa6 \
     libdrm2 \
     libopengl0 \

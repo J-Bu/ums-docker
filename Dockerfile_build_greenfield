@@ -43,14 +43,15 @@ RUN apt-get install -y --no-install-recommends \
     xxd \
     inotify-tools
 
-RUN echo '#!/bin/sh -x\n\
-for file in ls /patches/*; do\n\
+RUN echo '#!/bin/sh\n\
+for file in /patches/*; do\n\
   if ! patch -R -p1 -s -f --dry-run < "${file}" &> /dev/null; then\n\
     patch -p1 < "${file}"\n\
   fi\n\
 done\n\
 yarn install\n\
 yarn workspaces foreach --parallel --topological-dev run build\n\
+#yarn workspace @gfld/compositor-proxy build\n\
 yarn workspace @gfld/compositor-proxy-cli package'\
 > /build.sh
 RUN chmod +x /build.sh
