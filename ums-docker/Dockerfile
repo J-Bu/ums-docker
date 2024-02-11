@@ -18,7 +18,7 @@ ENV LANG=en_US.UTF-8
 # Needed for UMS installation
 RUN apt-get install --no-install-recommends -y bc procps expect
 
-COPY setup-igel-ums-linux_${ums_version}.bin /root/
+COPY --chmod=0755 setup-igel-ums-linux_${ums_version}.bin /root/
 COPY unintended_ums_installation.sh /root/
 RUN /root/unintended_ums_installation.sh /root/setup-igel-ums-linux_${ums_version}.bin
 RUN rm -f /root/setup-igel-ums-linux_${ums_version}.bin
