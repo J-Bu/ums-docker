@@ -8,6 +8,12 @@ cat << EOF > packages/compositor-proxy-cli/package/applications.json
     "executable": "/opt/IGEL/RemoteManager/rmclient/RemoteManager.bin",
     "args": [],
     "env": {}
+  },
+  "/admin": {
+    "name": "UMS Admin",
+    "executable": "/opt/IGEL/RemoteManager/rmadmin/RMAdmin.bin",
+    "args": [],
+    "env": {}
   }
 }
 EOF
@@ -22,4 +28,4 @@ xauth add "${HOST}":1 . "$(xxd -l 16 -p /dev/urandom)"
 export LOG_LEVEL=debug
 
 yarn workspace @gfld/compositor-shell run start &
-./packages/compositor-proxy-cli/package/compositor-proxy-cli --applications="./packages/compositor-proxy-cli/package/applications.json"
+./packages/compositor-proxy-cli/package/compositor-proxy-cli --base-url="ws://${PUBLIC_HOSTNAME}:8081" --allow-origin="http://${PUBLIC_HOSTNAME}:8080" --applications="./packages/compositor-proxy-cli/package/applications.json"

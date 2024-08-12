@@ -1,5 +1,11 @@
 #!/bin/sh
 
+if test -n "$(find /opt/IGEL -maxdepth 0 -empty)"; then
+  cp -Rapf "/opt/IGEL_tmp/"* "/opt/IGEL"
+fi
+
+su igelumses -s /bin/bash -c "ES_JAVA_HOME=/opt/IGEL/RemoteManager/_jvm /opt/IGEL/RemoteManager/elasticsearch/bin/elasticsearch -d"
+
 export $(cat /opt/IGEL/RemoteManager/rmguiserver/conf/ums-server.env | xargs)
 export JAVA_OPTS=" \
   -Dcatalina.home=${RM_HOME}/rmguiserver \

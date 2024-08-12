@@ -1,1 +1,3 @@
 /ums-docker/*.bin
+/ums-client-data
+/ums-server-data

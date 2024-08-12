@@ -5,11 +5,15 @@ services:
       context: ums-docker
       target: ums-client
     restart: always
+    hostname: ums-client.local
+    environment:
+      - PUBLIC_HOSTNAME=localhost
     ports:
       - '8080:8080'
       - '8081:8081'
     volumes:
       - './greenfield:/opt/greenfield'
+      - './ums-client-data:/root/.java/'
     devices:
       - '/dev/dri:/dev/dri'
     networks:
@@ -20,10 +24,18 @@ services:
       context: ums-docker
       target: ums-server
     restart: always
+    hostname: ums-server.local
     ports:
       - '8443:8443'
+      - '30001:30001'
+      - '30005:30005/udp'
+      - '30005:30005/tcp'
+    volumes:
+      - './ums-server-data:/opt/IGEL'
     networks:
-      - ums
+      ums:
+        aliases:
+          - ums-server.local
 
 networks:
   ums:

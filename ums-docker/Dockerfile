@@ -18,6 +18,9 @@ ENV LANG=en_US.UTF-8
 # Needed for UMS installation
 RUN apt-get install --no-install-recommends -y bc procps expect
 
+# Needed for Remote Console, libs are now checked during install so install them before running the installer
+RUN apt-get install --no-install-recommends -y libqt5core5a libxext6 libxrender1 libxtst6 libxi6 wget
+
 COPY --chmod=0755 setup-igel-ums-linux_${ums_version}.bin /root/
 COPY unintended_ums_installation.sh /root/
 RUN /root/unintended_ums_installation.sh /root/setup-igel-ums-linux_${ums_version}.bin
@@ -25,8 +28,6 @@ RUN rm -f /root/setup-igel-ums-linux_${ums_version}.bin
 RUN rm -f /root/unintended_ums_installation.sh
 
 FROM base AS ums-client
-# Needed for Remote Console
-RUN apt-get install --no-install-recommends -y libqt5core5a libxext6 libxrender1 libxtst6 libxi6
 
 # Install latest node for better compatibility with greenfield
 RUN apt-get install -y curl
@@ -68,5 +69,6 @@ COPY ["client-entrypoint.sh", "/entrypoint.sh"]
 ENTRYPOINT ["/entrypoint.sh"]
 
 FROM base AS ums-server
+RUN mv /opt/IGEL /opt/IGEL_tmp
 COPY ["server-entrypoint.sh", "/entrypoint.sh"]
 ENTRYPOINT ["/entrypoint.sh"]
