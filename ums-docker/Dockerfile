@@ -2,7 +2,7 @@
 FROM debian:stable AS base
 ARG ums_version
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 ENV TERM=vt100
 
 RUN apt-get update
@@ -16,7 +16,7 @@ RUN update-locale LANG=en_US.UTF-8
 ENV LANG=en_US.UTF-8
 
 # Needed for UMS installation
-RUN apt-get install --no-install-recommends -y bc procps expect
+RUN apt-get install --no-install-recommends -y bc procps expect libqt5core5a wget 
 
 COPY --chmod=0755 setup-igel-ums-linux_${ums_version}.bin /root/
 COPY unintended_ums_installation.sh /root/
@@ -26,47 +26,26 @@ RUN rm -f /root/unintended_ums_installation.sh
 
 FROM base AS ums-client
 # Needed for Remote Console
-RUN apt-get install --no-install-recommends -y libqt5core5a libxext6 libxrender1 libxtst6 libxi6
+RUN apt-get install --no-install-recommends -y libxext6 libxrender1 libxtst6 libxi6
 
-# Install latest node for better compatibility with greenfield
-RUN apt-get install -y curl
-RUN curl -fsSL https://deb.nodesource.com/setup_21.x | bash -
-RUN apt-get install -y nodejs
-RUN npm install --global yarn
+# Install xpra and xpra-html5 to stream console to html
+RUN apt-get install --no-install-recommends -y python3-pip libxxhash-dev libvpx-dev pkg-config libx11-dev libxfixes-dev libxext-dev libxdamage-dev libxkbfile-dev libxrandr-dev build-essential libxtst-dev libwebp-dev libopenh264-dev libxcomposite-dev libxres-dev libgtk-3-dev python3-cairo-dev python-gi-dev liblz4-dev python3-dev xvfb libuinputplus-dev python3-uinput wget unzip
+RUN pip --no-cache-dir install --break-system-packages xpra
+RUN wget https://github.com/Xpra-org/xpra-html5/archive/refs/tags/v16.1.zip -O /tmp/xpra-html5.zip
+RUN unzip /tmp/xpra-html5.zip -d /tmp/
+RUN cd /tmp/xpra-html5-16.1 && ./setup.py install
 
-# Needed for greenfield proxy
-RUN apt-get install -y --no-install-recommends \
-    libffi8 \
-    libudev1 \
-    libgbm1 \
-    libgraphene-1.0-0 \
-    gstreamer1.0-plugins-base \
-    gstreamer1.0-plugins-good \
-    gstreamer1.0-plugins-bad \
-    gstreamer1.0-plugins-ugly \
-    gstreamer1.0-gl \
-    gstreamer1.0-vaapi \
-    libgl1-mesa-dri \
-    mesa-va-drivers \
-    libosmesa6 \
-    libdrm2 \
-    libopengl0 \
-    libglvnd0 \
-    libglx0 \
-    libglapi-mesa \
-    libegl1-mesa \
-    libglx-mesa0 \
-    xwayland \
-    xauth \
-    xxd
-
-RUN mkdir -p /var/run/compositor-proxy
-RUN mkdir -p /opt/greenfield
-WORKDIR /opt/greenfield
+RUN apt-get clean
+RUN rm -rf /var/lib/apt/lists/*
+RUN rm -rf /tmp/*
 
 COPY ["client-entrypoint.sh", "/entrypoint.sh"]
 ENTRYPOINT ["/entrypoint.sh"]
 
 FROM base AS ums-server
+
+RUN apt-get clean
+RUN rm -rf /var/lib/apt/lists/*
+
 COPY ["server-entrypoint.sh", "/entrypoint.sh"]
 ENTRYPOINT ["/entrypoint.sh"]

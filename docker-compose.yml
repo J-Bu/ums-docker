@@ -5,26 +5,45 @@ services:
       context: ums-docker
       target: ums-client
     restart: always
+    hostname: ums-client.local
+    environment:
+      - PUBLIC_HOSTNAME=jb-eng.de
     ports:
-      - '8080:8080'
-      - '8081:8081'
+      - '10000:10000'
     volumes:
-      - './greenfield:/opt/greenfield'
+      - './ums-client-data:/root/.java/'
     devices:
       - '/dev/dri:/dev/dri'
     networks:
-      - ums
+      ums:
+        aliases:
+          - ums-client.local
+      web_and_certs_default:
+        aliases:
+          - ums-client.local
 
   ums-server:
     build:
       context: ums-docker
       target: ums-server
     restart: always
+    hostname: wums.jb-eng.de
     ports:
-      - '8443:8443'
+      - '30001:30001'
+      - '30005:30005/udp'
+      - '30005:30005/tcp'
+    volumes:
+      - './ums-server-data:/opt/IGEL'
     networks:
-      - ums
+      ums:
+        aliases:
+          - ums-server.local
+      web_and_certs_default:
+        aliases:
+          - ums-server.local
 
 networks:
   ums:
     name: ums-network
+  web_and_certs_default:
+    external: true
